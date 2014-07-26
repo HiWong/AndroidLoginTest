@@ -15,6 +15,8 @@ import roboguice.inject.InjectView;
 public class HomeActivity
         extends RoboActivity implements View.OnClickListener {
 
+    @InjectView(R.id.a_home_id_text)
+    TextView idText;
     @InjectView(R.id.a_home_login_button)
     Button loginButton;
     @Inject
@@ -38,7 +40,8 @@ public class HomeActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
-        this.menuPresenter.setView(menu);
+        this.menuPresenter.setView(this, menu);
+        this.menuPresenter.onResume();
         return true;
     }
 
@@ -48,11 +51,11 @@ public class HomeActivity
 
         switch (item.getItemId()) {
             case R.id.m_main_login:
-                this.menuPresenter.doLogin(this);
+                this.menuPresenter.doLogin();
                 result = true;
                 break;
             case R.id.m_main_logout:
-                this.menuPresenter.doLogout(this);
+                this.menuPresenter.doLogout();
                 result = true;
                 break;
             default:
@@ -64,7 +67,15 @@ public class HomeActivity
         return result;
     }
 
-    public void setLoginButtonVisibilty(boolean isVisible) {
+    public void setIdText(String text) {
+        this.idText.setText(text);
+    }
+
+    public void setLoginButtonEnabled(boolean enabled) {
+        this.loginButton.setEnabled(enabled);
+    }
+
+    public void setLoginButtonVisibility(boolean isVisible) {
         int v = isVisible ? View.VISIBLE : View.GONE;
         this.loginButton.setVisibility(v);
     }
@@ -79,5 +90,19 @@ public class HomeActivity
         setContentView(R.layout.activity_home);
         presenter.setView(this);
         this.loginButton.setOnClickListener(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        this.presenter.onPause();
+        this.menuPresenter.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        this.presenter.onResume();
+        this.menuPresenter.onResume();
     }
 }

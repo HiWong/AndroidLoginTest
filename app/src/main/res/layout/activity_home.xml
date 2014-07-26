@@ -1,4 +1,4 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -10,20 +10,43 @@
     tools:context=".HomeActivity">
 
     <TextView
+        android:id="@+id/a_home_title_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/hello_world" />
+        android:layout_alignParentTop="true"
+        android:text="@string/a_home_title" />
 
     <TextView
         android:id="@+id/a_home_welcome_text"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="false"
+        android:layout_alignParentStart="false"
+        android:layout_below="@id/a_home_title_text" />
+
+    <TextView
+        android:id="@+id/a_home_id_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="false"
+        android:layout_alignParentStart="false"
+        android:layout_below="@id/a_home_welcome_text" />
 
     <Button
         android:id="@+id/a_home_login_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/a_home_id_text"
         android:text="@string/a_home_login_button" />
 
+    <ProgressBar
+        android:id="@+id/a_home_progress"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="bottom"
+        android:indeterminate="true"
+        android:visibility="gone" />
 
-</LinearLayout>
+</RelativeLayout>
