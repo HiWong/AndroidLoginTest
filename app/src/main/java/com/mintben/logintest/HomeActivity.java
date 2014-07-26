@@ -5,6 +5,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import javax.inject.Inject;
@@ -19,6 +20,8 @@ public class HomeActivity
     TextView idText;
     @InjectView(R.id.a_home_login_button)
     Button loginButton;
+    @InjectView(R.id.a_home_progress)
+    ProgressBar loginProgress;
     @Inject
     MainMenuPresenter menuPresenter;
     @Inject
@@ -78,6 +81,11 @@ public class HomeActivity
     public void setLoginButtonVisibility(boolean isVisible) {
         int v = isVisible ? View.VISIBLE : View.GONE;
         this.loginButton.setVisibility(v);
+    }
+
+    public void setLoginProgressVisibility(boolean visible) {
+        int v = visible ? View.VISIBLE : View.GONE;
+        this.loginProgress.setVisibility(v);
     }
 
     public void setWelcomeText(String text) {

@@ -11,14 +11,19 @@ import javax.inject.Inject;
 import roboguice.service.RoboIntentService;
 
 public class AuthenticationService extends RoboIntentService {
-    public static final String ACTION_LOGIN_END = "LOGIN";
+    public static final String ACTION_LOGIN_END = "LOGIN_END";
     public static final String ACTION_LOGIN_START = "LOGIN_START";
-    public static final String ACTION_LOGOUT = "LOGOUT";
+    public static final String ACTION_LOGOUT_END = "LOGOUT_END";
+    public static final String ACTION_LOGOUT_START = "LOGOUT_START";
+
     public static final String KEY_ACTION = "KEY_ACTION";
     public static final String KEY_OUTCOME = "KEY_OUTCOME";
+
     public static final String ON_LOGIN_BROADCAST = "com.mintyben.service.LOGIN";
+
     public static final String OUTCOME_FAIL = "KEY_OUTCOME";
     public static final String OUTCOME_SUCCESS = "KEY_OUTCOME";
+
     @SuppressWarnings("UnusedDeclaration")
     @Inject
     private IdentityModel identityModel;
@@ -37,13 +42,28 @@ public class AuthenticationService extends RoboIntentService {
         super.onStart(intent, startId);
     }
 
+    private void broadcastFail(String action) {
+        Intent broadcast = new Intent(ON_LOGIN_BROADCAST);
+        broadcast.putExtra(KEY_ACTION, action);
+        broadcast.putExtra(KEY_OUTCOME, OUTCOME_FAIL);
+
+        this.sendBroadcast(broadcast);
+    }
+
     private void broadcastSuccess(String action) {
         Intent broadcast = new Intent(ON_LOGIN_BROADCAST);
         broadcast.putExtra(KEY_ACTION, action);
+        broadcast.putExtra(KEY_OUTCOME, OUTCOME_SUCCESS);
+
         this.sendBroadcast(broadcast);
     }
 
     private void doLogin() {
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException ignored) {
+        }
+
         LoginInformation info = new LoginInformation("login/1234", "Someone");
         this.identityModel.setLoginInfo(info);
 
@@ -51,26 +71,28 @@ public class AuthenticationService extends RoboIntentService {
     }
 
     private void doLogout() {
-        this.identityModel.logOut();
-
-        this.broadcastSuccess(ACTION_LOGOUT);
-    }
-
-    @Override
-    protected void onHandleIntent(Intent intent) {
         try {
             Thread.sleep(1000);
         } catch (InterruptedException ignored) {
         }
 
+        this.identityModel.logOut();
+
+        this.broadcastSuccess(ACTION_LOGOUT_END);
+    }
+
+    @Override
+    protected void onHandleIntent(Intent intent) {
         Bundle extras = intent.getExtras();
         Preconditions.checkNotNull(extras);
 
         String task = extras.getString(KEY_ACTION);
 
         if (ACTION_LOGIN_END.equals(task)) {
+            this.broadcastSuccess(ACTION_LOGIN_START);
             this.doLogin();
-        } else if (ACTION_LOGOUT.equals(task)) {
+        } else if (ACTION_LOGOUT_END.equals(task)) {
+            this.broadcastSuccess(ACTION_LOGOUT_START);
             this.doLogout();
         }
     }

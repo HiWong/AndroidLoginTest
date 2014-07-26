@@ -4,10 +4,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import javax.inject.Inject;
 
@@ -22,13 +20,11 @@ public class MainMenuPresenter {
     private AuthenticationReceiver onLogInReceiver;
 
     public void doLogin() {
-        this.identityModel.doLogin(this.context);
-        this.updateView();
+        this.identityModel.startLogin(this.context);
     }
 
     public void doLogout() {
-        this.identityModel.doLogout(this.context);
-        this.updateView();
+        this.identityModel.startLogout(this.context);
     }
 
     public void onPause() {
@@ -53,27 +49,16 @@ public class MainMenuPresenter {
     }
 
     private void updateView() {
-        this.loginItem.setVisible(!this.identityModel.isLoggedIn());
-        this.logoutItem.setVisible(this.identityModel.isLoggedIn());
+        int state = this.identityModel.getLoggedInState();
+        this.loginItem.setVisible(state == IdentityModel.STATE_LOGGED_OUT);
+        this.logoutItem.setVisible(state == IdentityModel.STATE_LOGGED_IN);
     }
 
 
     private class AuthenticationReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Bundle extras = intent.getExtras();
-
-            if (extras != null) {
-                String action = extras.getString(AuthenticationService.KEY_ACTION);
-
-                if (AuthenticationService.ACTION_LOGIN_END.equals(action)) {
-                    Toast.makeText(context, "Relieved login", Toast.LENGTH_SHORT).show();
-                } else if (AuthenticationService.ACTION_LOGOUT.equals(action)) {
-                    Toast.makeText(context, "Relieved logout", Toast.LENGTH_SHORT).show();
-                }
-
-                MainMenuPresenter.this.updateView();
-            }
+            MainMenuPresenter.this.updateView();
         }
     }
 }

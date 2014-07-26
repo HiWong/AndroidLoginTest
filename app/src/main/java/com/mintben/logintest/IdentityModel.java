@@ -10,22 +10,15 @@ import com.mintben.Utilities.ThreadPreconditions;
 
 @Singleton
 public class IdentityModel {
+    public static final int STATE_LOGGED_IN = 0;
+    public static final int STATE_LOGGED_OUT = 3;
+    private int loggedIntState = STATE_LOGGED_OUT;
+    public static final int STATE_LOGGING_IN = 1;
+    public static final int STATE_LOGGING_OUT = 2;
     private LoginInformation loginInfo;
 
-    public void doLogin(Context loginContext) {
-        Toast.makeText(loginContext, "Login", Toast.LENGTH_SHORT).show();
-
-        Intent authSvc = new Intent(loginContext, AuthenticationService.class);
-        authSvc.putExtra(AuthenticationService.KEY_ACTION, AuthenticationService.ACTION_LOGIN_END);
-        loginContext.startService(authSvc);
-    }
-
-    public void doLogout(Context loginContext) {
-        Preconditions.checkNotNull(loginContext);
-
-        Intent authSvc = new Intent(loginContext, AuthenticationService.class);
-        authSvc.putExtra(AuthenticationService.KEY_ACTION, AuthenticationService.ACTION_LOGOUT);
-        loginContext.startService(authSvc);
+    public int getLoggedInState() {
+        return this.loggedIntState;
     }
 
     public LoginInformation getLoginInfo() {
@@ -42,10 +35,7 @@ public class IdentityModel {
         }
 
         this.loginInfo = loginInfo;
-    }
-
-    public boolean isLoggedIn() {
-        return this.loginInfo != null;
+        this.loggedIntState = STATE_LOGGED_IN;
     }
 
     public void logOut() {
@@ -57,5 +47,25 @@ public class IdentityModel {
         }
 
         this.loginInfo = null;
+        this.loggedIntState = STATE_LOGGED_OUT;
+    }
+
+    public void startLogin(Context loginContext) {
+        Toast.makeText(loginContext, "Login", Toast.LENGTH_SHORT).show();
+
+        Intent authSvc = new Intent(loginContext, AuthenticationService.class);
+        authSvc.putExtra(AuthenticationService.KEY_ACTION, AuthenticationService.ACTION_LOGIN_END);
+        loginContext.startService(authSvc);
+
+        this.loggedIntState = STATE_LOGGING_IN;
+    }
+
+    public void startLogout(Context loginContext) {
+        Preconditions.checkNotNull(loginContext);
+
+        Intent authSvc = new Intent(loginContext, AuthenticationService.class);
+        authSvc.putExtra(AuthenticationService.KEY_ACTION, AuthenticationService.ACTION_LOGOUT_END);
+        loginContext.startService(authSvc);
+        this.loggedIntState = STATE_LOGGING_OUT;
     }
 }
