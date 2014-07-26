@@ -1,0 +1,14 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".HomeActivity">
+    <item
+        android:id="@+id/m_main_login"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="@string/m_main_login_button" />
+    <item
+        android:id="@+id/m_main_logout"
+        android:orderInCategory="110"
+        android:showAsAction="never"
+        android:title="@string/m_main_logout_button" />
+</menu>
