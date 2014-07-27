@@ -9,7 +9,7 @@ public class LoginPresenter {
     public void doLogin() {
         String userName = this.view.getUserName();
 
-        Intent loginBroadCast = new Intent(LoginActivity.ON_LOGIN_BROADCAST);
+        Intent loginBroadCast = new Intent(LoginActivity.BROADCAST_ON_LOGIN);
         loginBroadCast.putExtra(LoginActivity.KEY_IDENTITY_ID, "id/" + userName);
         loginBroadCast.putExtra(LoginActivity.KEY_IDENTITY_DISPLAYNAME, userName);
 

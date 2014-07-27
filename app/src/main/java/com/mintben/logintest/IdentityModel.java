@@ -38,6 +38,10 @@ public class IdentityModel {
         this.loggedIntState = STATE_LOGGED_IN;
     }
 
+    public boolean isAuthenticated() {
+        return this.loggedIntState == STATE_LOGGED_IN;
+    }
+
     public void logOut() {
         ThreadPreconditions.checkNotOnUiThread();
 

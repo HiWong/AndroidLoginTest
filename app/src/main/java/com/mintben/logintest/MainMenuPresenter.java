@@ -33,7 +33,7 @@ public class MainMenuPresenter {
 
     public void onResume() {
         if (this.context != null) {
-            IntentFilter filter = new IntentFilter(AuthenticationService.ON_LOGIN_BROADCAST);
+            IntentFilter filter = new IntentFilter(AuthenticationService.BROADCAST_LOGIN_CHANGED);
             this.context.registerReceiver(this.onLogInReceiver, filter);
         }
     }

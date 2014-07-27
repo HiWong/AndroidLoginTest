@@ -24,7 +24,7 @@ public class HomePresenter {
     }
 
     public void onResume() {
-        IntentFilter filter = new IntentFilter(AuthenticationService.ON_LOGIN_BROADCAST);
+        IntentFilter filter = new IntentFilter(AuthenticationService.BROADCAST_LOGIN_CHANGED);
         this.view.registerReceiver(this.onSignInReceiver, filter);
     }
 

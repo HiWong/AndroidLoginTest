@@ -17,13 +17,12 @@ public class AuthenticationService extends RoboIntentService {
     public static final String ACTION_LOGIN_START = "LOGIN_START";
     public static final String ACTION_LOGOUT_END = "LOGOUT_END";
     public static final String ACTION_LOGOUT_START = "LOGOUT_START";
-
-    public static final String KEY_ACTION = "KEY_ACTION";
-    public static final String KEY_LOGIN_HINT = "KEY_LOGIN_HINT";
-    public static final String KEY_OUTCOME = "KEY_OUTCOME";
-
-    public static final String ON_LOGIN_BROADCAST = "com.mintyben.service.LOGIN";
-
+    public static final String BROADCAST_AUTHENTICATED = "com.mintben.logintest.AuthenticationService.BROADCAST_AUTHENTICATED";
+    public static final String BROADCAST_LOGIN_CHANGED = "com.mintben.logintest.AuthenticationService.BROADCAST_LOGIN_CHANGED";
+    public static final String KEY_ACTION = "com.mintben.logintest.AuthenticationService.KEY_ACTION";
+    public static final String KEY_FAIL_REASON = "com.mintben.logintest.AuthenticationService.KEY_FAIL_REASON";
+    public static final String KEY_LOGIN_HINT = "com.mintben.logintest.AuthenticationService.KEY_LOGIN_HINT";
+    public static final String KEY_OUTCOME = "com.mintben.logintest.AuthenticationService.KEY_OUTCOME";
     public static final String OUTCOME_FAIL = "KEY_OUTCOME";
     public static final String OUTCOME_SUCCESS = "KEY_OUTCOME";
 
@@ -41,7 +40,7 @@ public class AuthenticationService extends RoboIntentService {
     }
 
     private void broadcastFail(String action) {
-        Intent broadcast = new Intent(ON_LOGIN_BROADCAST);
+        Intent broadcast = new Intent(BROADCAST_LOGIN_CHANGED);
         broadcast.putExtra(KEY_ACTION, action);
         broadcast.putExtra(KEY_OUTCOME, OUTCOME_FAIL);
 
@@ -49,7 +48,7 @@ public class AuthenticationService extends RoboIntentService {
     }
 
     private void broadcastSuccess(String action) {
-        Intent broadcast = new Intent(ON_LOGIN_BROADCAST);
+        Intent broadcast = new Intent(BROADCAST_LOGIN_CHANGED);
         broadcast.putExtra(KEY_ACTION, action);
         broadcast.putExtra(KEY_OUTCOME, OUTCOME_SUCCESS);
 
@@ -96,7 +95,8 @@ public class AuthenticationService extends RoboIntentService {
             loginActivity.putExtra(LoginActivity.KEY_LOGIN_HINT, extras.getString(KEY_LOGIN_HINT));
         }
 
-        this.startActivity(loginActivity);
+        loginActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        this.getApplication().startActivity(loginActivity);
     }
 
     private class LoginActivityReceiver extends BroadcastReceiver {
