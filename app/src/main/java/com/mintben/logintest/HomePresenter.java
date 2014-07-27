@@ -12,7 +12,7 @@ import javax.inject.Inject;
 public class HomePresenter {
     @Inject
     IdentityModel identityModel;
-    private AuthenticationReceiver onSignInReceiver;
+    private AuthenticationStateChangedReceiver onSignStateChangedReceiver;
     private HomeActivity view;
 
     public void doLogin() {
@@ -20,17 +20,17 @@ public class HomePresenter {
     }
 
     public void onPause() {
-        this.view.unregisterReceiver(this.onSignInReceiver);
+        this.view.unregisterReceiver(this.onSignStateChangedReceiver);
     }
 
     public void onResume() {
-        IntentFilter filter = new IntentFilter(AuthenticationService.BROADCAST_LOGIN_CHANGED);
-        this.view.registerReceiver(this.onSignInReceiver, filter);
+        IntentFilter filter = new IntentFilter(LoginActivity.BROADCAST_LOGIN_STATE_CHANGED);
+        this.view.registerReceiver(this.onSignStateChangedReceiver, filter);
     }
 
     public void setView(HomeActivity view) {
         this.view = view;
-        this.onSignInReceiver = new AuthenticationReceiver();
+        this.onSignStateChangedReceiver = new AuthenticationStateChangedReceiver();
         this.updateView();
     }
 
@@ -62,7 +62,7 @@ public class HomePresenter {
         }
     }
 
-    private class AuthenticationReceiver extends BroadcastReceiver {
+    private class AuthenticationStateChangedReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
             Bundle extras = intent.getExtras();
@@ -71,15 +71,15 @@ public class HomePresenter {
                 return;
             }
 
-            String action = extras.getString(AuthenticationService.KEY_ACTION);
+            String action = extras.getString(LoginActivity.KEY_ACTION);
 
-            if (AuthenticationService.ACTION_LOGIN_START.equals(action)) {
+            if (LoginActivity.ACTION_LOGIN_START.equals(action)) {
                 Toast.makeText(context, "Start login", Toast.LENGTH_SHORT).show();
-            } else if (AuthenticationService.ACTION_LOGIN_END.equals(action)) {
+            } else if (LoginActivity.ACTION_LOGIN_END.equals(action)) {
                 Toast.makeText(context, "Finished login", Toast.LENGTH_SHORT).show();
-            } else if (AuthenticationService.ACTION_LOGOUT_START.equals(action)) {
+            } else if (LoginActivity.ACTION_LOGOUT_START.equals(action)) {
                 Toast.makeText(context, "Start logout", Toast.LENGTH_SHORT).show();
-            } else if (AuthenticationService.ACTION_LOGOUT_END.equals(action)) {
+            } else if (LoginActivity.ACTION_LOGOUT_END.equals(action)) {
                 Toast.makeText(context, "Finished logout", Toast.LENGTH_SHORT).show();
             }
 

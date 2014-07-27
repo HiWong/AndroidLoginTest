@@ -43,13 +43,6 @@ public class IdentityModel {
     }
 
     public void logOut() {
-        ThreadPreconditions.checkNotOnUiThread();
-
-        try {
-            Thread.sleep(600);
-        } catch (InterruptedException ignored) {
-        }
-
         this.loginInfo = null;
         this.loggedIntState = STATE_LOGGED_OUT;
     }
@@ -58,18 +51,8 @@ public class IdentityModel {
         Toast.makeText(loginContext, "Login", Toast.LENGTH_SHORT).show();
 
         Intent authSvc = new Intent(loginContext, AuthenticationService.class);
-        authSvc.putExtra(AuthenticationService.KEY_ACTION, AuthenticationService.ACTION_LOGIN_END);
         loginContext.startService(authSvc);
 
         this.loggedIntState = STATE_LOGGING_IN;
-    }
-
-    public void startLogout(Context loginContext) {
-        Preconditions.checkNotNull(loginContext);
-
-        Intent authSvc = new Intent(loginContext, AuthenticationService.class);
-        authSvc.putExtra(AuthenticationService.KEY_ACTION, AuthenticationService.ACTION_LOGOUT_END);
-        loginContext.startService(authSvc);
-        this.loggedIntState = STATE_LOGGING_OUT;
     }
 }

@@ -17,24 +17,27 @@ public class MainMenuPresenter {
     private IdentityModel identityModel;
     private MenuItem loginItem;
     private MenuItem logoutItem;
-    private AuthenticationReceiver onLogInReceiver;
+    private AuthenticationReceiver onAuthenticationReceiver;
 
     public void doLogin() {
         this.identityModel.startLogin(this.context);
     }
 
     public void doLogout() {
-        this.identityModel.startLogout(this.context);
+        this.identityModel.logOut();
+        this.updateView();
     }
 
     public void onPause() {
-        this.context.unregisterReceiver(this.onLogInReceiver);
+        if (this.onAuthenticationReceiver != null) {
+            this.context.unregisterReceiver(this.onAuthenticationReceiver);
+        }
     }
 
     public void onResume() {
         if (this.context != null) {
-            IntentFilter filter = new IntentFilter(AuthenticationService.BROADCAST_LOGIN_CHANGED);
-            this.context.registerReceiver(this.onLogInReceiver, filter);
+            IntentFilter filter = new IntentFilter(AuthenticationService.BROADCAST_AUTHENTICATED);
+            this.context.registerReceiver(this.onAuthenticationReceiver, filter);
         }
     }
 
@@ -43,7 +46,7 @@ public class MainMenuPresenter {
         this.loginItem = view.findItem(R.id.m_main_login);
         this.logoutItem = view.findItem(R.id.m_main_logout);
 
-        this.onLogInReceiver = new AuthenticationReceiver();
+        this.onAuthenticationReceiver = new AuthenticationReceiver();
 
         this.updateView();
     }
