@@ -22,6 +22,15 @@
             android:name=".AuthenticationService"
             android:icon="@android:drawable/ic_secure"
             android:label="@string/s_auth_label" />
+
+        <activity
+            android:name=".LoginActivity"
+            android:label="@string/title_activity_login"
+            android:parentActivityName=".HomeActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.mintben.logintest.HomeActivity" />
+        </activity>
     </application>
 
 </manifest>

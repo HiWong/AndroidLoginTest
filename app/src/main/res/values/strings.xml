@@ -8,5 +8,10 @@
     <string name="m_main_logout_button">Logout</string>
     <string name="a_home_login_button">Login</string>
     <string name="s_auth_label">Authentication Service</string>
+    <string name="title_activity_login">LoginActivity</string>
+    <string name="a_login_prompt">Login</string>
+    <string name="a_login_userName_hint">UserName</string>
+    <string name="a_login_password_hint">password</string>
+    <string name="a_login_loginButton_text">Login</string>
 
 </resources>

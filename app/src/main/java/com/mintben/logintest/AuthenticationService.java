@@ -1,5 +1,7 @@
 package com.mintben.logintest;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -17,6 +19,7 @@ public class AuthenticationService extends RoboIntentService {
     public static final String ACTION_LOGOUT_START = "LOGOUT_START";
 
     public static final String KEY_ACTION = "KEY_ACTION";
+    public static final String KEY_LOGIN_HINT = "KEY_LOGIN_HINT";
     public static final String KEY_OUTCOME = "KEY_OUTCOME";
 
     public static final String ON_LOGIN_BROADCAST = "com.mintyben.service.LOGIN";
@@ -37,11 +40,6 @@ public class AuthenticationService extends RoboIntentService {
         return null;
     }
 
-    @Override
-    public void onStart(Intent intent, int startId) {
-        super.onStart(intent, startId);
-    }
-
     private void broadcastFail(String action) {
         Intent broadcast = new Intent(ON_LOGIN_BROADCAST);
         broadcast.putExtra(KEY_ACTION, action);
@@ -58,18 +56,6 @@ public class AuthenticationService extends RoboIntentService {
         this.sendBroadcast(broadcast);
     }
 
-    private void doLogin() {
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException ignored) {
-        }
-
-        LoginInformation info = new LoginInformation("login/1234", "Someone");
-        this.identityModel.setLoginInfo(info);
-
-        this.broadcastSuccess(ACTION_LOGIN_END);
-    }
-
     private void doLogout() {
         try {
             Thread.sleep(1000);
@@ -81,6 +67,12 @@ public class AuthenticationService extends RoboIntentService {
         this.broadcastSuccess(ACTION_LOGOUT_END);
     }
 
+    private void finishLogin(LoginInformation info) {
+        this.identityModel.setLoginInfo(info);
+
+        this.broadcastSuccess(ACTION_LOGIN_END);
+    }
+
     @Override
     protected void onHandleIntent(Intent intent) {
         Bundle extras = intent.getExtras();
@@ -90,10 +82,42 @@ public class AuthenticationService extends RoboIntentService {
 
         if (ACTION_LOGIN_END.equals(task)) {
             this.broadcastSuccess(ACTION_LOGIN_START);
-            this.doLogin();
+            this.startLoginActivity(intent.getExtras());
         } else if (ACTION_LOGOUT_END.equals(task)) {
             this.broadcastSuccess(ACTION_LOGOUT_START);
             this.doLogout();
+        }
+    }
+
+    private void startLoginActivity(Bundle extras) {
+        Intent loginActivity = new Intent(this, LoginActivity.class);
+
+        if (extras != null && extras.containsKey(KEY_LOGIN_HINT)) {
+            loginActivity.putExtra(LoginActivity.KEY_LOGIN_HINT, extras.getString(KEY_LOGIN_HINT));
+        }
+
+        this.startActivity(loginActivity);
+    }
+
+    private class LoginActivityReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent == null || intent.getExtras() == null) {
+                return;
+            }
+
+            Bundle e = intent.getExtras();
+
+            boolean success = e.getBoolean(LoginActivity.KEY_LOGIN_SUCCESS);
+
+            if (success) {
+                String id = e.getString(LoginActivity.KEY_IDENTITY_ID);
+                String displayName = e.getString(LoginActivity.KEY_IDENTITY_DISPLAYNAME);
+                LoginInformation info = new LoginInformation(id, displayName);
+                AuthenticationService.this.finishLogin(info);
+            } else {
+                AuthenticationService.this.broadcastFail(ACTION_LOGIN_START);
+            }
         }
     }
 }
