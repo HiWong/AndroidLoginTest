@@ -5,14 +5,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.widget.Toast;
+
+import com.google.common.base.Strings;
 
 import javax.inject.Inject;
 
 public class HomePresenter {
     @Inject
     IdentityModel identityModel;
-    private AuthenticationStateChangedReceiver onSignStateChangedReceiver;
+    private boolean initialized = false;
+    private OnAuthenticatedReceiver onAuthenticatedReceiver;
+    private LoginStateChangedReceiver onSignStateChangedReceiver;
     private HomeActivity view;
 
     public void doLogin() {
@@ -21,48 +24,88 @@ public class HomePresenter {
 
     public void onPause() {
         this.view.unregisterReceiver(this.onSignStateChangedReceiver);
+        this.view.unregisterReceiver(this.onAuthenticatedReceiver);
     }
 
     public void onResume() {
-        IntentFilter filter = new IntentFilter(LoginActivity.BROADCAST_LOGIN_STATE_CHANGED);
-        this.view.registerReceiver(this.onSignStateChangedReceiver, filter);
+        IntentFilter loginFilter = new IntentFilter(LoginActivity.BROADCAST_LOGIN_STATE_CHANGED);
+        this.view.registerReceiver(this.onSignStateChangedReceiver, loginFilter);
+
+        IntentFilter authFilter = new IntentFilter(AuthenticationService.BROADCAST_AUTHENTICATED);
+        this.view.registerReceiver(this.onAuthenticatedReceiver, authFilter);
+
+        this.updateViewLoginInformation();
     }
 
     public void setView(HomeActivity view) {
         this.view = view;
-        this.onSignStateChangedReceiver = new AuthenticationStateChangedReceiver();
-        this.updateView();
+        this.initialized = true;
+
+        this.onSignStateChangedReceiver = new LoginStateChangedReceiver();
+        this.onAuthenticatedReceiver = new OnAuthenticatedReceiver();
+        this.updateViewLoginInformation();
     }
 
-    public void updateView() {
-        int state = this.identityModel.getLoggedInState();
+    public void updateViewFromLoginState(String loginState, boolean success) {
+        if (!this.initialized || Strings.isNullOrEmpty(loginState)) {
+            return;
+        }
 
-        if (state == IdentityModel.STATE_LOGGING_IN) {
+        if (loginState.equals(LoginActivity.ACTION_LOGIN_START)) {
             this.view.setWelcomeText("Logging in...");
             this.view.setLoginProgressVisibility(true);
-            this.view.setLoginButtonVisibility(true);
             this.view.setLoginButtonEnabled(false);
-        } else if (state == IdentityModel.STATE_LOGGED_IN) {
-            LoginInformation loginInfo = this.identityModel.getLoginInfo();
-
-            this.view.setWelcomeText("Welcome " + loginInfo.getDisplayName());
-            this.view.setIdText("Id: " + loginInfo.getId());
-            this.view.setLoginButtonVisibility(false);
+        } else if (loginState.equals(LoginActivity.ACTION_LOGIN_END)) {
             this.view.setLoginProgressVisibility(false);
-        } else if (state == IdentityModel.STATE_LOGGING_OUT) {
+
+            if (!success) {
+                this.view.setWelcomeText("Login failed.");
+            }
+
+        } else if (loginState.equals(LoginActivity.ACTION_LOGOUT_START)) {
             this.view.setWelcomeText("Logging out...");
-            this.view.setLoginButtonVisibility(false);
             this.view.setLoginProgressVisibility(true);
-        } else if (state == IdentityModel.STATE_LOGGED_OUT) {
-            this.view.setWelcomeText("You are not logged in.");
-            this.view.setIdText("");
-            this.view.setLoginButtonVisibility(true);
-            this.view.setLoginButtonEnabled(true);
+        } else if (loginState.equals(LoginActivity.ACTION_LOGIN_END)) {
             this.view.setLoginProgressVisibility(false);
         }
     }
 
-    private class AuthenticationStateChangedReceiver extends BroadcastReceiver {
+    public void updateViewLoginInformation() {
+        if (!this.initialized) return;
+
+        int state = this.identityModel.getAuthenticatedState();
+
+        if (state == IdentityModel.STATE_NOT_AUTHENTICATED) {
+            this.view.setWelcomeText("You are not authenticated.");
+
+            this.view.setLoginButtonVisibile(true);
+            this.view.setLoginButtonEnabled(true);
+
+            this.view.setLoginInfoLayoutVisibile(false);
+        } else if (state == IdentityModel.STATE_AUTHENTICATED) {
+            IdentityInfo idInfo = this.identityModel.getIdentityInfo();
+
+            this.view.setLoginInfoLayoutVisibile(true);
+            this.view.setWelcomeText("Welcome " + idInfo.getDisplayName());
+            this.view.setIdText(idInfo.getId());
+            this.view.setDisplayNameText(idInfo.getDisplayName());
+
+            this.view.setLoginButtonVisibile(false);
+        }
+    }
+
+    private class OnAuthenticatedReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Bundle extras = intent.getExtras();
+            if (extras == null) {
+                return;
+            }
+            HomePresenter.this.updateViewLoginInformation();
+        }
+    }
+
+    private class LoginStateChangedReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
             Bundle extras = intent.getExtras();
@@ -72,18 +115,9 @@ public class HomePresenter {
             }
 
             String action = extras.getString(LoginActivity.KEY_ACTION);
+            boolean success = LoginActivity.OUTCOME_SUCCESS.equals(extras.getString(LoginActivity.KEY_OUTCOME));
 
-            if (LoginActivity.ACTION_LOGIN_START.equals(action)) {
-                Toast.makeText(context, "Start login", Toast.LENGTH_SHORT).show();
-            } else if (LoginActivity.ACTION_LOGIN_END.equals(action)) {
-                Toast.makeText(context, "Finished login", Toast.LENGTH_SHORT).show();
-            } else if (LoginActivity.ACTION_LOGOUT_START.equals(action)) {
-                Toast.makeText(context, "Start logout", Toast.LENGTH_SHORT).show();
-            } else if (LoginActivity.ACTION_LOGOUT_END.equals(action)) {
-                Toast.makeText(context, "Finished logout", Toast.LENGTH_SHORT).show();
-            }
-
-            HomePresenter.this.updateView();
+            HomePresenter.this.updateViewFromLoginState(action, success);
         }
     }
 }

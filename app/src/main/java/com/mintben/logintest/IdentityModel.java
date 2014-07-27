@@ -6,45 +6,32 @@ import android.widget.Toast;
 
 import com.google.common.base.Preconditions;
 import com.google.inject.Singleton;
-import com.mintben.Utilities.ThreadPreconditions;
 
 @Singleton
 public class IdentityModel {
-    public static final int STATE_LOGGED_IN = 0;
-    public static final int STATE_LOGGED_OUT = 3;
-    private int loggedIntState = STATE_LOGGED_OUT;
-    public static final int STATE_LOGGING_IN = 1;
-    public static final int STATE_LOGGING_OUT = 2;
-    private LoginInformation loginInfo;
+    public static final int STATE_AUTHENTICATED = 1;
+    public static final int STATE_NOT_AUTHENTICATED = 0;
 
-    public int getLoggedInState() {
-        return this.loggedIntState;
+    private IdentityInfo identityInfo;
+
+    public int getAuthenticatedState() {
+        return this.identityInfo == null ?
+                STATE_NOT_AUTHENTICATED :
+                STATE_AUTHENTICATED;
     }
 
-    public LoginInformation getLoginInfo() {
-        return this.loginInfo;
+    public IdentityInfo getIdentityInfo() {
+        return this.identityInfo;
     }
 
-    public void setLoginInfo(LoginInformation loginInfo) {
-        Preconditions.checkNotNull(loginInfo);
-        ThreadPreconditions.checkNotOnUiThread();
+    public void setIdentityInfo(IdentityInfo identityInfo) {
+        Preconditions.checkNotNull(identityInfo);
 
-        try {
-            Thread.sleep(600);
-        } catch (InterruptedException ignored) {
-        }
-
-        this.loginInfo = loginInfo;
-        this.loggedIntState = STATE_LOGGED_IN;
-    }
-
-    public boolean isAuthenticated() {
-        return this.loggedIntState == STATE_LOGGED_IN;
+        this.identityInfo = identityInfo;
     }
 
     public void logOut() {
-        this.loginInfo = null;
-        this.loggedIntState = STATE_LOGGED_OUT;
+        this.identityInfo = null;
     }
 
     public void startLogin(Context loginContext) {
@@ -52,7 +39,5 @@ public class IdentityModel {
 
         Intent authSvc = new Intent(loginContext, AuthenticationService.class);
         loginContext.startService(authSvc);
-
-        this.loggedIntState = STATE_LOGGING_IN;
     }
 }

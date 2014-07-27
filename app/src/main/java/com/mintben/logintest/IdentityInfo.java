@@ -1,10 +1,10 @@
 package com.mintben.logintest;
 
-public class LoginInformation {
+public class IdentityInfo {
     private final String displayName;
     private final String id;
 
-    public LoginInformation(String id, String displayName) {
+    public IdentityInfo(String id, String displayName) {
         this.id = id;
         this.displayName = displayName;
     }

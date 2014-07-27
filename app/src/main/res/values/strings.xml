@@ -12,5 +12,7 @@
     <string name="a_login_userName_hint">UserName</string>
     <string name="a_login_password_hint">password</string>
     <string name="a_login_loginButton_text">Login</string>
+    <string name="a_home_loginInfo_id_label">Id:</string>
+    <string name="a_home_loginInfo_displayName_label">Display name:</string>
 
 </resources>

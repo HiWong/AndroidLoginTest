@@ -11,6 +11,7 @@
 
     <TextView
         android:id="@+id/a_home_title_text"
+        style="?android:attr/textAppearanceLarge"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
@@ -18,26 +19,65 @@
 
     <TextView
         android:id="@+id/a_home_welcome_text"
+        style="?android:attr/textAppearanceMedium"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="false"
         android:layout_alignParentStart="false"
         android:layout_below="@id/a_home_title_text" />
 
-    <TextView
-        android:id="@+id/a_home_id_text"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="false"
-        android:layout_alignParentStart="false"
-        android:layout_below="@id/a_home_welcome_text" />
-
     <Button
         android:id="@+id/a_home_login_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/a_home_id_text"
+        android:layout_below="@id/a_home_welcome_text"
         android:text="@string/a_home_login_button" />
+
+    <RelativeLayout
+        android:id="@+id/a_home_loginInfo_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/a_home_welcome_text"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/a_home_loginInfo_id_label"
+            style="?android:attr/textAppearanceMedium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:text="@string/a_home_loginInfo_id_label"
+            android:textIsSelectable="false"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/a_home_loginInfo_id_text"
+            style="?android:attr/textAppearanceMedium"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/a_home_loginInfo_id_label"
+            android:hint="@string/a_home_loginInfo_id_label"
+            android:textStyle="italic" />
+
+        <TextView
+            android:id="@+id/a_home_loginInfo_displayName_label"
+            style="?android:attr/textAppearanceMedium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/a_home_loginInfo_id_label"
+            android:text="@string/a_home_loginInfo_displayName_label"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/a_home_loginInfo_displayName_text"
+            style="?android:attr/textAppearanceMedium"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/a_home_loginInfo_id_text"
+            android:layout_toRightOf="@id/a_home_loginInfo_displayName_label"
+            android:hint="@string/a_home_loginInfo_displayName_label"
+            android:textStyle="italic" />
+    </RelativeLayout>
 
     <ProgressBar
         android:id="@+id/a_home_progress"

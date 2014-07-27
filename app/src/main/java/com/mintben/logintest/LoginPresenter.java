@@ -1,6 +1,5 @@
 package com.mintben.logintest;
 
-import android.content.Intent;
 import android.os.Bundle;
 
 public class LoginPresenter {
@@ -13,12 +12,8 @@ public class LoginPresenter {
         }
         String userName = this.view.getUserName();
 
-        Intent loginBroadCast = new Intent(LoginActivity.BROADCAST_ON_LOGIN);
-        loginBroadCast.putExtra(LoginActivity.KEY_IDENTITY_ID, "id/" + userName);
-        loginBroadCast.putExtra(LoginActivity.KEY_IDENTITY_DISPLAY_NAME, userName);
-
         this.hasLoggedIn = true;
-        this.view.sendBroadcast(loginBroadCast);
+        this.view.broadcastOnLoginSuccess("id/" + userName, userName);
         this.view.close();
     }
 
@@ -35,6 +30,7 @@ public class LoginPresenter {
             this.view.broadcastLoginChangedSuccess(LoginActivity.ACTION_LOGIN_END);
         } else {
             this.view.broadcastLoginChangedFail(LoginActivity.ACTION_LOGIN_END);
+            this.view.broadcastOnLoginFail("Did not log in");
         }
     }
 

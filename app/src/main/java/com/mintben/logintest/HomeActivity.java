@@ -6,6 +6,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import javax.inject.Inject;
@@ -16,10 +17,14 @@ import roboguice.inject.InjectView;
 public class HomeActivity
         extends RoboActivity implements View.OnClickListener {
 
-    @InjectView(R.id.a_home_id_text)
+    @InjectView(R.id.a_home_loginInfo_displayName_text)
+    TextView displayName;
+    @InjectView(R.id.a_home_loginInfo_id_text)
     TextView idText;
     @InjectView(R.id.a_home_login_button)
     Button loginButton;
+    @InjectView(R.id.a_home_loginInfo_layout)
+    RelativeLayout loginInfoLayout;
     @InjectView(R.id.a_home_progress)
     ProgressBar loginProgress;
     @Inject
@@ -65,9 +70,11 @@ public class HomeActivity
                 result = super.onOptionsItemSelected(item);
         }
 
-        this.presenter.updateView();
-
         return result;
+    }
+
+    public void setDisplayNameText(String text) {
+        this.displayName.setText(text);
     }
 
     public void setIdText(String text) {
@@ -78,9 +85,14 @@ public class HomeActivity
         this.loginButton.setEnabled(enabled);
     }
 
-    public void setLoginButtonVisibility(boolean isVisible) {
+    public void setLoginButtonVisibile(boolean isVisible) {
         int v = isVisible ? View.VISIBLE : View.GONE;
         this.loginButton.setVisibility(v);
+    }
+
+    public void setLoginInfoLayoutVisibile(boolean visible) {
+        int v = visible ? View.VISIBLE : View.GONE;
+        this.loginInfoLayout.setVisibility(v);
     }
 
     public void setLoginProgressVisibility(boolean visible) {

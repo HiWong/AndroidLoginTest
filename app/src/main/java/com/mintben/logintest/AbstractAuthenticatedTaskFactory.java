@@ -27,7 +27,7 @@ public abstract class AbstractAuthenticatedTaskFactory {
     protected final <TTask extends RoboAsyncTask> TTask executeWithAuthentication(TTask task) {
         ThreadPreconditions.checkOnUiThread();
 
-        if (this.identityModel.isAuthenticated()) {
+        if (this.identityModel.getAuthenticatedState() == IdentityModel.STATE_AUTHENTICATED) {
             task.execute();
         } else {
             this.queuedTasks.add(task);

@@ -15,6 +15,7 @@ public class MainMenuPresenter {
     @SuppressWarnings("UnusedDeclaration")
     @Inject
     private IdentityModel identityModel;
+    private boolean initalized = false;
     private MenuItem loginItem;
     private MenuItem logoutItem;
     private AuthenticationReceiver onAuthenticationReceiver;
@@ -39,6 +40,8 @@ public class MainMenuPresenter {
             IntentFilter filter = new IntentFilter(AuthenticationService.BROADCAST_AUTHENTICATED);
             this.context.registerReceiver(this.onAuthenticationReceiver, filter);
         }
+
+        this.updateView();
     }
 
     public void setView(Context context, Menu view) {
@@ -48,15 +51,17 @@ public class MainMenuPresenter {
 
         this.onAuthenticationReceiver = new AuthenticationReceiver();
 
+        this.initalized = true;
         this.updateView();
     }
 
     private void updateView() {
-        int state = this.identityModel.getLoggedInState();
-        this.loginItem.setVisible(state == IdentityModel.STATE_LOGGED_OUT);
-        this.logoutItem.setVisible(state == IdentityModel.STATE_LOGGED_IN);
-    }
+        if (!initalized) return;
 
+        int state = this.identityModel.getAuthenticatedState();
+        this.loginItem.setVisible(state == IdentityModel.STATE_NOT_AUTHENTICATED);
+        this.logoutItem.setVisible(state == IdentityModel.STATE_AUTHENTICATED);
+    }
 
     private class AuthenticationReceiver extends BroadcastReceiver {
         @Override
