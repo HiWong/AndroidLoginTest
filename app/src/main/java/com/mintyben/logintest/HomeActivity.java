@@ -1,4 +1,4 @@
-package com.mintben.logintest;
+package com.mintyben.logintest;
 
 import android.os.Bundle;
 import android.view.Menu;
@@ -11,11 +11,11 @@ import android.widget.TextView;
 
 import javax.inject.Inject;
 
-import roboguice.activity.RoboActivity;
+import roboguice.activity.RoboFragmentActivity;
 import roboguice.inject.InjectView;
 
 public class HomeActivity
-        extends RoboActivity implements View.OnClickListener {
+        extends RoboFragmentActivity implements View.OnClickListener {
 
     @InjectView(R.id.a_home_loginInfo_displayName_text)
     TextView displayName;

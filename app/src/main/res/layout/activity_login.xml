@@ -6,7 +6,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.mintben.logintest.LoginActivity">
+    tools:context="com.mintyben.logintest.LoginActivity">
 
     <TextView
         android:id="@+id/a_login_welcome_prompt"

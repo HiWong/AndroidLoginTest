@@ -1,4 +1,4 @@
-package com.mintben.Utilities;
+package com.mintyben.Utilities;
 
 import android.os.Looper;
 

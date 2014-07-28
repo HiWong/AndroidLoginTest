@@ -1,4 +1,4 @@
-package com.mintben.logintest;
+package com.mintyben.logintest;
 
 public class IdentityInfo {
     private final String displayName;

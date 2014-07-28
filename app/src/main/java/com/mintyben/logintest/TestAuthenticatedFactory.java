@@ -1,4 +1,4 @@
-package com.mintben.logintest;
+package com.mintyben.logintest;
 
 import android.content.Context;
 
@@ -6,10 +6,10 @@ import com.google.common.base.Preconditions;
 
 import javax.inject.Inject;
 
-public class TestAuthenticaedFactory extends AbstractAuthenticatedTaskFactory {
+public class TestAuthenticatedFactory extends AbstractAuthenticatedTaskFactory {
 
     @Inject
-    protected TestAuthenticaedFactory(IdentityModel identityModel) {
+    protected TestAuthenticatedFactory(IdentityModel identityModel) {
         super(identityModel);
     }
 

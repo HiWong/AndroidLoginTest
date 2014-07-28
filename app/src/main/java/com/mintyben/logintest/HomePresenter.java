@@ -1,4 +1,4 @@
-package com.mintben.logintest;
+package com.mintyben.logintest;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

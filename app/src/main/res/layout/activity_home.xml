@@ -89,4 +89,13 @@
         android:indeterminate="true"
         android:visibility="gone" />
 
+    <fragment
+        android:id="@+id/fragment"
+        android:name="com.mintyben.logintest.TestFragment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        tools:layout="@layout/fragment_test" />
+
 </RelativeLayout>

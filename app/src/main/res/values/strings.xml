@@ -14,5 +14,7 @@
     <string name="a_login_loginButton_text">Login</string>
     <string name="a_home_loginInfo_id_label">Id:</string>
     <string name="a_home_loginInfo_displayName_label">Display name:</string>
+    <string name="f_test_message_hint">message</string>
+    <string name="f_test_goButton_text">GO</string>
 
 </resources>

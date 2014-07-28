@@ -1,12 +1,13 @@
-package com.mintben.logintest;
+package com.mintyben.logintest;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.widget.Toast;
 
-import com.mintben.Utilities.ThreadPreconditions;
+import com.mintyben.Utilities.ThreadPreconditions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,16 +40,19 @@ public abstract class AbstractAuthenticatedTaskFactory {
 
     private void launchAuthentication(Context context) {
         synchronized (this.syncLock) {
-            if (this.authenticationReceiver != null) {
+            if (this.authenticationReceiver == null) {
                 this.authenticationReceiver = new AuthenticationReceiver(context);
                 IntentFilter filter = new IntentFilter(AuthenticationService.BROADCAST_AUTHENTICATED);
                 context.registerReceiver(this.authenticationReceiver, filter);
+
+                this.identityModel.startLogin(context);
             }
         }
     }
 
     @SuppressWarnings("UnusedParameters")
-    protected void onAuthenticationFailed(String reason) {
+    protected void onAuthenticationFailed(Context context, String reason) {
+        Toast.makeText(context, "Failed to start task. Auth failed. Reason:" + reason, Toast.LENGTH_SHORT).show();
     }
 
     private class AuthenticationReceiver extends BroadcastReceiver {
@@ -63,7 +67,7 @@ public abstract class AbstractAuthenticatedTaskFactory {
             Bundle extras = intent.getExtras();
 
             if (extras == null || !extras.containsKey(AuthenticationService.KEY_OUTCOME)) {
-                AbstractAuthenticatedTaskFactory.this.onAuthenticationFailed("Bad broadcast.");
+                AbstractAuthenticatedTaskFactory.this.onAuthenticationFailed(this.context, "Bad broadcast.");
                 return;
             }
 
@@ -71,11 +75,11 @@ public abstract class AbstractAuthenticatedTaskFactory {
 
             if (AuthenticationService.OUTCOME_FAIL.equals(outcome)) {
                 String reason = extras.getString(AuthenticationService.KEY_FAIL_REASON);
-                AbstractAuthenticatedTaskFactory.this.onAuthenticationFailed("Authentication failed. Reason: " + reason);
+                AbstractAuthenticatedTaskFactory.this.onAuthenticationFailed(this.context, "Authentication failed. Reason: " + reason);
             } else if (AuthenticationService.OUTCOME_SUCCESS.equals(outcome)) {
                 this.executeTasks();
             } else {
-                AbstractAuthenticatedTaskFactory.this.onAuthenticationFailed("Unknown Authentication outcome. Outcome: " + outcome);
+                AbstractAuthenticatedTaskFactory.this.onAuthenticationFailed(this.context, "Unknown Authentication outcome. Outcome: " + outcome);
             }
 
             this.unregister();
